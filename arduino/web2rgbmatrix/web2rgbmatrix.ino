@@ -44,15 +44,15 @@ char timezone[80] = DEFAULT_TIMEZONE;
 bool twelvehour = DEFAULT_TWELVEHOUR;
 
 #define DEFAULT_SSID "MY_SSID"
-char ssid[80] = DEFAULT_SSID;
-
 #define DEFAULT_PASSWORD "password"
+
+char ssid[80] = DEFAULT_SSID;
 char password[80] = DEFAULT_PASSWORD;
 
 #define DEFAULT_AP_SSID "rgbmatrix"
-char ap[80] = DEFAULT_AP_SSID;
-
 #define DEFAULT_AP_PASSWORD "password"
+
+char ap[80] = DEFAULT_AP_SSID;
 char ap_password[80] = DEFAULT_PASSWORD;
 
 #define DEFAULT_HOSTNAME "rgbmatrix"
@@ -215,6 +215,7 @@ void setup(void) {
   //Read Config
   parseConfig();
 
+
   // Initialize Wifi
   WiFi.mode(WIFI_STA);
   WiFi.begin(ssid, password);
@@ -234,7 +235,7 @@ void setup(void) {
     DBG_OUTPUT_PORT.print("IP address: ");DBG_OUTPUT_PORT.println(my_ip.toString());
   } else {
     my_ip = WiFi.localIP();
-    wifi_mode = "Infrastructure";
+    wifi_mode = "Connected";
     DBG_OUTPUT_PORT.print("Connected! IP address: ");DBG_OUTPUT_PORT.println(my_ip.toString());
   }
   WiFi.onEvent(WiFiStationConnected, WiFiEvent_t::ARDUINO_EVENT_WIFI_STA_CONNECTED);
@@ -242,6 +243,7 @@ void setup(void) {
   WiFi.onEvent(WiFiStationDisconnected, WiFiEvent_t::ARDUINO_EVENT_WIFI_STA_DISCONNECTED);
 
   // Setup EZ Time
+  /*
   if (WiFi.status() == WL_CONNECTED ) {
     setDebug(INFO);
     waitForSync();
@@ -249,7 +251,8 @@ void setup(void) {
     myTZ.setLocation(F(timezone));
     DBG_OUTPUT_PORT.print(F("Time in your timezone: "));
     DBG_OUTPUT_PORT.println(myTZ.dateTime());
-  }
+  }*/
+
 
   // Initialize SD Card
   spi.begin(SD_SCLK, SD_MISO, SD_MOSI, SD_SS);
@@ -1689,7 +1692,10 @@ void showStatus(){
   byte r=(byte)(rgb>>16);
   byte g=(byte)(rgb>>8);
   byte b=(byte)(rgb);
-  String display_string = "Wifi: " + wifi_mode +"\n" + my_ip.toString() + "\nrgbmatrix.local\nSD: " + sd_status;
+  String display_string = "Wifi: " + wifi_mode +"\n" + my_ip.toString();
+  display_string= display_string +"\n"+WiFi.macAddress();
+  //display_string= display_string+ "\nrgbmatrix.local";
+  display_string= display_string+"\nSD: " + sd_status;
   matrix_display->clearScreen();
   matrix_display->setBrightness8(matrix_brightness);
   matrix_display->setTextColor(matrix_display->color565(r, g, b));
